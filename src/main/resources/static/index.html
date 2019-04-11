@@ -13,6 +13,15 @@
 <h1>Hello</h1>
 <div id="app">
     {{ message }}
+
+    <input type="date" name="bday" id="bday" >
+
+    <form method="POST" enctype="multipart/form-data" action="/upload-files">
+        File to upload:
+        <input type="file" multiple required />
+        <br>
+        <input type="submit" value="Upload" />
+    </form>
 </div>
 
 </body>
