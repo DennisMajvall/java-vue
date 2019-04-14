@@ -19,9 +19,6 @@ public class PostController {
 
     @GetMapping
     Iterable getPosts(){
-        if (repo.count() == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "OH NO, there are no posts");
-        }
         return repo.findAll();
     }
 
