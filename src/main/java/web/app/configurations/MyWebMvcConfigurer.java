@@ -1,4 +1,4 @@
-package web.security;
+package web.app.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;

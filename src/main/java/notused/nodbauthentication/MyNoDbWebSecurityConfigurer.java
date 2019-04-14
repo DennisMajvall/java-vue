@@ -1,4 +1,4 @@
-package web.security.nodbauthentication;
+package notused.nodbauthentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
