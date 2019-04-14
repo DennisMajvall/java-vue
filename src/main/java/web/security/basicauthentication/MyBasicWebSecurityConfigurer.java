@@ -1,4 +1,4 @@
-package web.basicauthentication;
+package web.security.basicauthentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

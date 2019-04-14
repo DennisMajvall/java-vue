@@ -1,4 +1,4 @@
-package web.basicauthentication;
+package web.security.basicauthentication;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
