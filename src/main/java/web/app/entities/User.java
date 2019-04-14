@@ -1,9 +1,9 @@
 package web.app.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class User {
@@ -14,11 +14,22 @@ public class User {
     private String username;
     private String password;
 
+    @ElementCollection
+    private Collection<String> roles = new ArrayList<String>();
+
     public User() {}
 
     public User(String username, String password) {
+        this(username, password, null);
+    }
+
+    public User(String username, String password, List<String> roles) {
         this.username = username;
         this.password = password;
+        if (roles == null) {
+            roles = List.of("USER");
+        }
+        this.roles = roles;
     }
 
     public String getUsername() {
@@ -43,5 +54,21 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String[] getRoles() {
+        System.out.println("ROLES");
+        System.out.println(roles);
+        System.out.println("ROLES END");
+
+        return roles.toArray(String[]::new);
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    public boolean isAdmin(){
+        return roles.contains("ADMIN");
     }
 }

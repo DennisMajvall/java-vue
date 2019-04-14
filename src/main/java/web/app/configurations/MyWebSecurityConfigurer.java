@@ -3,10 +3,12 @@ package web.app.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import web.app.services.MyUserDetailsService;
 
 @Configuration
 public class MyWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -17,6 +19,7 @@ public class MyWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
                 .antMatchers("/api/**").hasRole("USER")
                 .and().formLogin().permitAll().defaultSuccessUrl("/", true)
                 .and().logout().permitAll().logoutSuccessUrl("/")
@@ -45,14 +48,5 @@ public class MyWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         auth
                 .userDetailsService(myUserDetailsService)
                 .passwordEncoder(myUserDetailsService.getEncoder());
-    }
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user")
-                .password(myUserDetailsService.getEncoder().encode("password"))
-                .roles("USER");
-
     }
 }
