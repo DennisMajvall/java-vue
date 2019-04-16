@@ -1,56 +1,57 @@
-package web.app.configurations;
+package web.app.services;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import web.app.entities.User;
-import web.app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import web.app.entities.User;
+import web.app.repositories.UserRepository;
 
 import javax.annotation.PostConstruct;
 
-@Configuration
+@Service
 public class MyUserDetailsService implements UserDetailsService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     public BCryptPasswordEncoder getEncoder() { return encoder; }
 
     @Autowired
-    private UserRepository repository;
-
+    private UserRepository userRepository;
 
     @PostConstruct
     private void createDefaultUsers(){
-        if (repository.findDistinctFirstByUsernameIgnoreCase("user") == null) {
-            addUser("user", "password");
+        if (userRepository.findDistinctFirstByUsernameIgnoreCase("root") == null) {
+            addUser("user", "password","USER");
+            addUser("root", "password", "ADMIN", "USER");
         }
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repository.findDistinctFirstByUsernameIgnoreCase(username);
+        User user = userRepository.findDistinctFirstByUsernameIgnoreCase(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found by name: " + username);
         }
         return toUserDetails(user);
     }
 
-    public void addUser(String name, String password){
-        User u = new User(name, encoder.encode(password));
+    public void addUser(String username, String password, String ...roles){
+        User u = new User(username, encoder.encode(password), roles);
         try {
-            repository.save(u);
+            userRepository.save(u);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     private UserDetails toUserDetails(User user) {
+        String[] roleArray = user.getRoles().stream().map(ur -> ur.role).toArray(String[]::new);
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .roles("USER").build();
+                .roles(roleArray).build();
     }
 }
