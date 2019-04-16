@@ -1,11 +1,15 @@
 package web.app.entities;
 
+import org.springframework.security.core.Authentication;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.security.Principal;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
+@Table(name="user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,22 +18,27 @@ public class User {
     private String username;
     private String password;
 
-    @ElementCollection
-    private Collection<String> roles = new ArrayList<String>();
+    @OneToMany(fetch = FetchType.EAGER, cascade={CascadeType.ALL})
+    @JoinColumn(name="user_id")
+    private Set<UserRole> roles;
 
     public User() {}
 
-    public User(String username, String password) {
-        this(username, password, null);
-    }
-
-    public User(String username, String password, List<String> roles) {
+    public User(String username, String password, String ...roles) {
         this.username = username;
         this.password = password;
-        if (roles == null) {
-            roles = List.of("USER");
+
+        if (roles.length == 0) {
+            roles = new String[]{"USER"};
         }
-        this.roles = roles;
+
+        this.roles = Stream.of(roles).map(s -> new UserRole(s, this)).collect(Collectors.toSet());
+    }
+
+    // Helper function used by RestControllers
+    public static boolean currentUserIsAdmin(Principal principal){
+        org.springframework.security.core.userdetails.User u = (org.springframework.security.core.userdetails.User) ((Authentication) principal).getPrincipal();
+        return u.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
 
     public String getUsername() {
@@ -56,15 +65,11 @@ public class User {
         this.id = id;
     }
 
-    public String[] getRoles() {
-        System.out.println("ROLES");
-        System.out.println(roles);
-        System.out.println("ROLES END");
-
-        return roles.toArray(String[]::new);
+    public Set<UserRole> getRoles() {
+        return roles;
     }
 
-    public void setRoles(List<String> roles) {
+    public void setRoles(Set<UserRole> roles) {
         this.roles = roles;
     }
 

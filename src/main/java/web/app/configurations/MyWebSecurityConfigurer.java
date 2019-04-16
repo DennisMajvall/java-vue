@@ -20,22 +20,12 @@ public class MyWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers("/api/**").hasRole("USER")
                 .and().formLogin().permitAll().defaultSuccessUrl("/", true)
                 .and().logout().permitAll().logoutSuccessUrl("/")
                 .and().csrf().disable()
         ;
-
-//        http.authorizeRequests().antMatchers("/api/**").hasRole("USER").and().formLogin();
-
-//        http.authorizeRequests()
-//                .antMatchers(HttpMethod.GET,"/api/users/*").hasRole("USER")
-//                .antMatchers(HttpMethod.GET,"/api/**").permitAll()
-//                .antMatchers("/api/**").hasRole("USER")
-//                .and().formLogin();
-
-        // Anything that does not start with /api
-//                .regexMatchers("^(?!\/api\/).+").hasRole("USER")
     }
 
     @Override
