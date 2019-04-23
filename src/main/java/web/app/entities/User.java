@@ -1,5 +1,6 @@
 package web.app.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.Authentication;
 
 import javax.persistence.*;
@@ -49,9 +50,8 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    @JsonIgnore
+    public String getPassword() { return password; }
 
     public void setPassword(String password) {
         this.password = password;

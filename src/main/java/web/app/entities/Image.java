@@ -1,21 +1,16 @@
 package web.app.entities;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
-public class Image implements Serializable {
-
-    @Id
-    public long auctionId;
+public class Image {
 
     @Id
     public String path;
 
     public Image() {}
-    public Image(Auction owner, String path) {
-        this.auctionId = owner.id;
+    public Image(String path) {
         this.path = path;
     }
 }

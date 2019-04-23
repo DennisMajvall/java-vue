@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Website title</title>
     <meta charset="utf8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="/main.js" defer></script>
+    <script type="module" src="/main.js" defer></script>
 </head>
+
 <body>
 
-<h1>Hello</h1>
-<div id="app">
-    {{ message }}
+    <h1>Hello</h1>
+    <div id="app">
+        <form id="create-auction" @submit.prevent="submitform">
+            <div>
+                <label for="title">Title:</label>
+                <input name="title" placeholder="Comfy sofa" v-model="title" required />
+            </div>
+            <div>
+                <label for="files">File to upload:</label>
+                <input type="file" name="files" accept=".png,.jpg,.jpeg,.gif,.bmp" multiple required
+                    value="Upload file(s)" @change="filesChange($event.target.files)" />
+            </div>
+            <button type="submit">Create Auction</button>
+        </form>
 
-    <input type="date" name="bday" id="bday" >
 
-    <form method="POST" enctype="multipart/form-data" action="/upload-files">
-        File to upload:
-        <input type="file" multiple required />
-        <br>
-        <input type="submit" value="Upload" />
-    </form>
-
-    <div id="messages"></div>
-</div>
+        <div id="websocket">
+            <div id="messages"></div>
+        </div>
+    </div>
 
 </body>
+
 </html>

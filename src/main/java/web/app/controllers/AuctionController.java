@@ -2,11 +2,10 @@ package web.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import web.app.entities.*;
+import web.app.entities.FullAuction;
+import web.app.entities.User;
 import web.app.repositories.FullAuctionRepository;
-import web.app.repositories.PostRepository;
 import web.app.repositories.UserRepository;
-import web.app.services.SocketService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
@@ -30,8 +29,8 @@ public class AuctionController {
         fa.seller = userRepo.findById(1L).get();
         fa.startingBid = 200;
 
-        fa.images.add(new Image(fa, "/cool-image.jpg"));
-        fa.images.add(new Image(fa, "/cool-image-2.jpg"));
+        fa.addImage("/cool-image.jpg");
+        fa.addImage("/cool-image-2.jpg");
 
         repo.save(fa);
     }
@@ -42,8 +41,11 @@ public class AuctionController {
     }
 
     @PostMapping
-    void post(@RequestBody FullAuction body) {
-        repo.save(body);
+    void post(@RequestBody FullAuction auction, Principal principal) {
+        User uploader = userRepo.findDistinctFirstByUsernameIgnoreCase(principal.getName());
+        auction.seller = uploader;
+
+        repo.save(auction);
     }
 
     @DeleteMapping
